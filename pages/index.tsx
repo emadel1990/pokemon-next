@@ -1,4 +1,4 @@
-import {FC, memo} from 'react';
+import {FC} from 'react';
 import {GetStaticProps} from 'next';
 import {Grid} from '@nextui-org/react';
 
