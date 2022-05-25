@@ -4,9 +4,6 @@ export interface favorite {
 }
 
 const toggleFavorite = (id: number, name: string) => {
-  if (typeof window === 'undefined') {
-    return false;
-  }
   let favorites: favorite[] = JSON.parse(localStorage.getItem('favorites') || '[]');
 
   if (favorites.some(favorite => favorite.id === id)) {

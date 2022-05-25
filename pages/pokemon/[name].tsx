@@ -14,7 +14,6 @@ interface Props {
 }
 
 const PokemonPage: FC<Props> = ({pokemon}) => {
-  console.log(pokemon);
   const [isFavorite, setFavorite] = useState<boolean>(localFavorites.existInFavorites(pokemon.id));
   const saveOnLocalStorage = () => {
     localFavorites.toggleFavorite(pokemon.id, pokemon.name);

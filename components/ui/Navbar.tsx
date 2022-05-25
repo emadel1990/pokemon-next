@@ -1,9 +1,11 @@
 import {memo} from 'react';
 import {Spacer, Text, useTheme, Link} from '@nextui-org/react';
 import Image from 'next/image';
+import {useRouter} from 'next/router';
 
 const Navbar = memo(() => {
   const {theme} = useTheme();
+  const pathname = useRouter().pathname;
   const idPokemon = (Math.random() * 151).toFixed(0);
   return (
     <div
@@ -24,7 +26,7 @@ const Navbar = memo(() => {
           width={85}
           height={85}
         />
-        <Text color="white" h2>
+        <Text h2 color={pathname === '/' ? theme?.colors.red600.value : 'white'}>
           P
         </Text>
         <Text color="white" h3>
@@ -33,7 +35,9 @@ const Navbar = memo(() => {
         <Spacer css={{flex: 1}} />
       </Link>
       <Link href="/favorites">
-        <Text h3>Favorites</Text>
+        <Text h3 color={pathname === '/favorites' ? theme?.colors.gradient.value : 'white'}>
+          Favorites
+        </Text>
       </Link>
     </div>
   );
