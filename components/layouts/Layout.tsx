@@ -1,10 +1,12 @@
 import { FC, ReactNode } from 'react';
-import Head from 'next/head';
 
-type Props = {
-	children: ReactNode;
+import Head from 'next/head';
+import { Navbar } from '../ui';
+
+interface Props {
+	children?: ReactNode;
 	title?: string;
-};
+}
 
 export const Layout: FC<Props> = ({ children, title }) => {
 	return (
@@ -17,9 +19,15 @@ export const Layout: FC<Props> = ({ children, title }) => {
 				<meta name='author' content='Emanuel Delgado' />
 			</Head>
 
-			{/* Navbar */}
+			<Navbar />
 
-			<main>{children}</main>
+			<main
+				style={{
+					padding: '0px 20px',
+				}}
+			>
+				{children}
+			</main>
 		</>
 	);
 };
