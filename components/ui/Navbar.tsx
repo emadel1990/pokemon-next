@@ -1,7 +1,8 @@
+import {memo} from 'react';
 import {Spacer, Text, useTheme, Link} from '@nextui-org/react';
 import Image from 'next/image';
 
-export const Navbar = () => {
+const Navbar = memo(() => {
   const {theme} = useTheme();
   const idPokemon = (Math.random() * 151).toFixed(0);
   return (
@@ -36,4 +37,8 @@ export const Navbar = () => {
       </Link>
     </div>
   );
-};
+});
+
+Navbar.displayName = 'Navbar';
+
+export {Navbar};

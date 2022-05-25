@@ -14,6 +14,7 @@ interface Props {
 }
 
 const PokemonPage: FC<Props> = ({pokemon}) => {
+  console.log(pokemon);
   const [isFavorite, setFavorite] = useState<boolean>(localFavorites.existInFavorites(pokemon.id));
   const saveOnLocalStorage = () => {
     localFavorites.toggleFavorite(pokemon.id, pokemon.name);
@@ -49,16 +50,44 @@ const PokemonPage: FC<Props> = ({pokemon}) => {
           </Grid>
           <Grid xs={12} sm={8} key={pokemon.id + 1}>
             <Card>
-              <Card.Header css={{display: 'flex', justifyContent: 'space-between'}}>
-                <Text h1 transform="capitalize">
+              <Card.Header
+                css={{
+                  padding: '0px 10px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap'
+                }}
+              >
+                <Text
+                  h1
+                  transform="capitalize"
+                  css={{
+                    textGradient: '45deg, $blue600 -20%, $pink600 50%'
+                  }}
+                  weight="bold"
+                >
                   {pokemon.name}
                 </Text>
-                <Button color={'gradient'} ghost={!isFavorite} onClick={saveOnLocalStorage}>
+                <Button
+                  shadow={!isFavorite}
+                  bordered={isFavorite}
+                  color={!isFavorite ? 'gradient' : 'error'}
+                  onClick={saveOnLocalStorage}
+                >
                   {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                 </Button>
               </Card.Header>
               <Card.Body>
-                <Text size={30}>Sprites:</Text>
+                <Text
+                  size={30}
+                  css={{
+                    textGradient: '45deg, $yellow600 -20%, $red600 100%'
+                  }}
+                  weight="bold"
+                >
+                  Sprites:
+                </Text>
                 <Container direction="row" display="flex" gap={2}>
                   <Image
                     src={pokemon.sprites.front_default}
@@ -98,8 +127,9 @@ const PokemonPage: FC<Props> = ({pokemon}) => {
 
 export const getStaticPaths: GetStaticPaths = async ctx => {
   const {data} = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');
+  const {results} = data;
   return {
-    paths: data.results.map(poke => ({
+    paths: results.map(poke => ({
       params: {name: poke.name}
     })),
     fallback: false
@@ -111,9 +141,15 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
 
   const {data} = await pokeApi.get<Pokemon>(`/pokemon/${name}`);
 
+  const pokemon = {
+    id: data.id,
+    name: data.name,
+    sprites: data.sprites
+  };
+
   return {
     props: {
-      pokemon: data
+      pokemon
     }
   };
 };
