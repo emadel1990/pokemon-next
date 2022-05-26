@@ -11,7 +11,6 @@ interface Props {
 const origin = typeof window === 'undefined' ? '' : window.location.origin;
 
 export const Layout: FC<Props> = ({children, title}) => {
-  console.log('Layout', origin);
   return (
     <>
       <Head>
@@ -20,6 +19,7 @@ export const Layout: FC<Props> = ({children, title}) => {
         <meta name="description" content="Informacion sobre el pokemon XXXX" />
         <meta name="keywords" content="XXXX, pokemon, pokedex" />
         <meta name="author" content="Emanuel Delgado" />
+        <link rel="shourtcut icon" href="/master-ball.png"></link>
 
         <meta property="og:title" content={`Info about ${title}`} />
         <meta property="og:description" content={`Pokemon Web App`} />

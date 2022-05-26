@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {GetStaticProps, GetStaticPaths} from 'next';
 
 import {Layout} from '../../components/layouts';
@@ -13,8 +13,13 @@ interface Props {
   pokemon: Pokemon;
 }
 
-const PokemonPage: FC<Props> = ({pokemon}) => {
-  const [isFavorite, setFavorite] = useState<boolean>(localFavorites.existInFavorites(pokemon.id));
+const PokemonPageByName: FC<Props> = ({pokemon}) => {
+  const [isFavorite, setFavorite] = useState<boolean>(false);
+
+  useEffect(() => {
+    setFavorite(localFavorites.existInFavorites(pokemon.id));
+  }, [pokemon.id]);
+
   const saveOnLocalStorage = () => {
     localFavorites.toggleFavorite(pokemon.id, pokemon.name);
     setFavorite(!isFavorite);
@@ -35,7 +40,7 @@ const PokemonPage: FC<Props> = ({pokemon}) => {
     <>
       <Layout title={pokemon.name}>
         <Grid.Container css={{marginTop: '5px'}} gap={2}>
-          <Grid xs={12} sm={4} key={pokemon.id}>
+          <Grid xs={12} sm={4}>
             <Card hoverable css={{padding: '30px'}}>
               <Card.Body css={{p: 1}}>
                 <Card.Image
@@ -47,7 +52,7 @@ const PokemonPage: FC<Props> = ({pokemon}) => {
               </Card.Body>
             </Card>
           </Grid>
-          <Grid xs={12} sm={8} key={pokemon.id + 1}>
+          <Grid xs={12} sm={8}>
             <Card>
               <Card.Header
                 css={{
@@ -153,4 +158,4 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
   };
 };
 
-export default PokemonPage;
+export default PokemonPageByName;

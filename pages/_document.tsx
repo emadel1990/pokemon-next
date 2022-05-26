@@ -3,31 +3,17 @@ import Document, {Html, Head, Main, NextScript, DocumentContext} from 'next/docu
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
-    const originalRenderPage = ctx.renderPage;
-
-    // Run the React rendering logic synchronously
-    ctx.renderPage = () =>
-      originalRenderPage({
-        // Useful for wrapping the whole react tree
-        enhanceApp: App => App,
-        // Useful for wrapping in a per-page basis
-        enhanceComponent: Component => Component
-      });
-
-    // Run the parent `getInitialProps`, it now includes the custom `renderPage`
     const initialProps = await Document.getInitialProps(ctx);
-
-    return initialProps;
+    return {
+      ...initialProps,
+      styles: [<>{initialProps.styles}</>]
+    };
   }
 
   render() {
     return (
       <Html lang="es">
-        <Head>
-          <link rel="shourtcut icon" href="/master-ball.png"></link>
-          {CssBaseline.flush()}
-        </Head>
-
+        <Head>{CssBaseline.flush()}</Head>
         <body>
           <Main />
           <NextScript />
