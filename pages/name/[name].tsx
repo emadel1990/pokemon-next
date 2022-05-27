@@ -1,24 +1,45 @@
-import {FC, useEffect, useState} from 'react';
-import {GetStaticProps, GetStaticPaths} from 'next';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { GetStaticProps, GetStaticPaths } from 'next';
+import { useRouter } from 'next/router';
 
-import {Layout} from '../../components/layouts';
-import {pokeApi} from '../../api';
-import {Pokemon, PokemonListResponse} from '../../Interfaces';
-import {localFavorites} from '../../utils';
+import { Layout } from '../../components/layouts';
+import { pokeApi } from '../../api';
+import { Pokemon, PokemonListResponse } from '../../Interfaces';
+import { localFavorites } from '../../utils';
+import { getPokemonInfo } from '@/utils/getPokemonInfo';
 
-import {Grid, Card, Text, Button, Container, Image} from '@nextui-org/react';
+import { Grid, Card, Text, Button, Container, Image } from '@nextui-org/react';
 import confetti from 'canvas-confetti';
 
 interface Props {
   pokemon: Pokemon;
 }
 
-const PokemonPageByName: FC<Props> = ({pokemon}) => {
+const PokemonPageByName: FC<Props> = ({ pokemon }) => {
+  const route = useRouter();
+
+  const formatRoute = useCallback(() => {
+    console.log('SE EJECUTA');
+    const ruta = route.route.toLowerCase();
+    route.push(
+      {
+        pathname: ruta,
+        query: {
+          name: pokemon.name
+        }
+      },
+      undefined,
+      { shallow: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [isFavorite, setFavorite] = useState<boolean>(false);
 
   useEffect(() => {
     setFavorite(localFavorites.existInFavorites(pokemon.id));
-  }, [pokemon.id]);
+    formatRoute();
+  }, [pokemon.id, formatRoute]);
 
   const saveOnLocalStorage = () => {
     localFavorites.toggleFavorite(pokemon.id, pokemon.name);
@@ -39,10 +60,14 @@ const PokemonPageByName: FC<Props> = ({pokemon}) => {
   return (
     <>
       <Layout title={pokemon.name}>
-        <Grid.Container css={{marginTop: '5px'}} gap={2}>
-          <Grid xs={12} sm={4}>
-            <Card hoverable css={{padding: '30px'}}>
-              <Card.Body css={{p: 1}}>
+        <Grid.Container
+          css={{ marginTop: '5px' }}
+          gap={2}>
+          <Grid
+            xs={12}
+            sm={4}>
+            <Card css={{ padding: '30px' }}>
+              <Card.Body css={{ p: 1 }}>
                 <Card.Image
                   src={pokemon.sprites.other?.dream_world.front_default || 'no-image'}
                   alt={pokemon.name}
@@ -52,7 +77,9 @@ const PokemonPageByName: FC<Props> = ({pokemon}) => {
               </Card.Body>
             </Card>
           </Grid>
-          <Grid xs={12} sm={8}>
+          <Grid
+            xs={12}
+            sm={8}>
             <Card>
               <Card.Header
                 css={{
@@ -61,24 +88,21 @@ const PokemonPageByName: FC<Props> = ({pokemon}) => {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap'
-                }}
-              >
+                }}>
                 <Text
                   h1
                   transform="capitalize"
                   css={{
                     textGradient: '45deg, $blue600 -20%, $pink600 50%'
                   }}
-                  weight="bold"
-                >
+                  weight="bold">
                   {pokemon.name}
                 </Text>
                 <Button
                   shadow={!isFavorite}
                   bordered={isFavorite}
                   color={!isFavorite ? 'gradient' : 'error'}
-                  onClick={saveOnLocalStorage}
-                >
+                  onClick={saveOnLocalStorage}>
                   {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                 </Button>
               </Card.Header>
@@ -88,11 +112,13 @@ const PokemonPageByName: FC<Props> = ({pokemon}) => {
                   css={{
                     textGradient: '45deg, $yellow600 -20%, $red600 100%'
                   }}
-                  weight="bold"
-                >
+                  weight="bold">
                   Sprites:
                 </Text>
-                <Container direction="row" display="flex" gap={2}>
+                <Container
+                  direction="row"
+                  display="flex"
+                  gap={2}>
                   <Image
                     src={pokemon.sprites.front_default}
                     alt={pokemon.name}
@@ -130,26 +156,31 @@ const PokemonPageByName: FC<Props> = ({pokemon}) => {
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 
 export const getStaticPaths: GetStaticPaths = async ctx => {
-  const {data} = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');
-  const {results} = data;
+  const { data } = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');
+  const { results } = data;
+
   return {
     paths: results.map(poke => ({
-      params: {name: poke.name}
+      params: { name: poke.name }
     })),
-    fallback: false
+    /* fallback: false */
+    fallback: 'blocking'
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({params}) => {
-  const {name} = params as {name: string};
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { name } = params as { name: string };
 
-  const {data} = await pokeApi.get<Pokemon>(`/pokemon/${name}`);
+  const pokemon = await getPokemonInfo(name);
 
-  const pokemon = {
-    id: data.id,
-    name: data.name,
-    sprites: data.sprites
-  };
+  if (!pokemon) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    };
+  }
 
   return {
     props: {
