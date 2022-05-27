@@ -52,7 +52,7 @@ const PokemonPageById: FC<Props> = ({ pokemon }) => {
                   src={pokemon.sprites.other?.dream_world.front_default || 'no-image'}
                   alt={pokemon.name}
                   width="100%"
-                  height={200}
+                  height={300}
                 />
               </Card.Body>
             </Card>

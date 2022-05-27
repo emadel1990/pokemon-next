@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { GetStaticProps } from 'next';
 import { Grid } from '@nextui-org/react';
 
@@ -12,7 +12,7 @@ interface Props {
   pokemons: SmallPokemon[];
 }
 
-const HomePage: FC<Props> = ({ pokemons }) => {
+const HomePage: FC<Props> = memo(({ pokemons }) => {
   return (
     <Layout title="Listado de Pokemons">
       <Grid.Container
@@ -27,7 +27,9 @@ const HomePage: FC<Props> = ({ pokemons }) => {
       </Grid.Container>
     </Layout>
   );
-};
+});
+
+HomePage.displayName = 'HomePage';
 
 export const getStaticProps: GetStaticProps = async ctx => {
   const { data } = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');

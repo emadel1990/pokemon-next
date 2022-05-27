@@ -21,15 +21,17 @@ export const PokemonCard: FC<Props> = ({ pokemon }) => {
       xs={6}
       sm={3}
       md={2}
-      xl={1}
+      xl={2}
       key={id}>
       <Card
         hoverable
         clickable
         css={{ w: '100%' }}
         onClick={handleClick}>
-        <Card.Body css={{ p: 1 }}>
+        <Card.Body css={{ w: '100%', p: 1 }}>
           <Card.Image
+            showSkeleton
+            maxDelay={10000}
             src={img}
             width="100%"
             height={300}
