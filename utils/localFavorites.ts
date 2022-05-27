@@ -1,15 +1,17 @@
+import { Stat } from 'Interfaces';
 export interface favorite {
   id: number;
   name: string;
+  stats: Stat[];
 }
 
-const toggleFavorite = (id: number, name: string) => {
+const toggleFavorite = (id: number, name: string, stats: Stat[]) => {
   let favorites: favorite[] = JSON.parse(localStorage.getItem('favorites') || '[]');
 
   if (favorites.some(favorite => favorite.id === id)) {
     favorites = favorites.filter(pokeId => pokeId.id !== id);
   } else {
-    favorites.push({id, name});
+    favorites.push({ id, name, stats });
   }
   localStorage.setItem('favorites', JSON.stringify(favorites));
 };
@@ -32,4 +34,4 @@ const pokemons = (): favorite[] => {
   return favorites;
 };
 
-export default {toggleFavorite, existInFavorites, pokemons};
+export default { toggleFavorite, existInFavorites, pokemons };

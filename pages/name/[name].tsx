@@ -42,7 +42,7 @@ const PokemonPageByName: FC<Props> = ({ pokemon }) => {
   }, [pokemon.id, formatRoute]);
 
   const saveOnLocalStorage = () => {
-    localFavorites.toggleFavorite(pokemon.id, pokemon.name);
+    localFavorites.toggleFavorite(pokemon.id, pokemon.name, pokemon.stats);
     setFavorite(!isFavorite);
     if (!isFavorite) {
       confetti({
